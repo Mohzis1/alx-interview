@@ -1,38 +1,40 @@
 #!/usr/bin/python3
-"""Determines a valid UTF-8 encoding"""
+"""This determines a valid UTF-8 encoding"""
 
 
 def validUTF8(data):
-    # Number of bytes to expect for the current character
-    bytes_to_expect = 0
-    
-    for byte in data:
-        # Check if the current byte starts with 10, which is invalid for the first byte
-        if bytes_to_expect == 0 and (byte >> 6) == 2:
-            return False
-        
-        if bytes_to_expect == 0:
-            # Determine the number of bytes to expect for the current character
-            if (byte >> 7) == 0:
-                bytes_to_expect = 0  # Single-byte character
-            elif (byte >> 5) == 6:
-                bytes_to_expect = 1  # Two-byte character
-            elif (byte >> 4) == 14:
-                bytes_to_expect = 2  # Three-byte character
-            elif (byte >> 3) == 30:
-                bytes_to_expect = 3  # Four-byte character
-            else:
+    """
+    bit1 checks if significant byte is 1
+    bit2 checks if second significant byte is 0
+    nbytes keeps track of how many 1s before 0 occurs
+    data represented by a list of integers to check
+    """
+
+    bit1 = 1 << 7
+    bit2 = 1 << 6
+    nbytes = 0
+
+    if not data or len(data) == 0:
+        return True
+
+    for num in data:
+        bit = 1 << 7
+        if nbytes == 0:
+            while (bit & num):
+                nbytes += 1
+                bit = bit >> 1
+
+            if nbytes == 0:
+                continue
+            if nbytes == 1 or nbytes > 4:
                 return False
         else:
-            # Check if the current byte starts with 10, which is valid for continuation bytes
-            if (byte >> 6) != 2:
+
+            if not (num & bit1 and not (num & bit2)):
                 return False
-            bytes_to_expect -= 1
-    
-    # All expected bytes were found
-    return bytes_to_expect == 0
+        nbytes -= 1
 
-# Test cases
-print(validUTF8([197, 130, 1]))  # Should return True
-print(validUTF8([235, 140, 4]))  # Should return False
-
+    if nbytes:
+        return False
+    else:
+        return True
