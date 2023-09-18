@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 """
- This contains methods that finds out the possible solutions to the n-queens and can
+Contains methods that find the possible solutions to the n-queens can
 be placed without them attacking each other(The n-queens problem).
 """
 import sys
 
 
-def is_valid(board, col, row):
+def is_valid(board, row, col):
     """
     Checks if a position of the queen is valid
     Args:
