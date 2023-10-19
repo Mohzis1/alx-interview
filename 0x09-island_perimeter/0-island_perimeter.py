@@ -1,4 +1,6 @@
-sland_perimeter function that finds the perimeter
+#!/usr/bin/python3
+"""
+Define island_perimeter function that finds the perimeter
 of an island in a body of water
 """
 
